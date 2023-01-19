@@ -1,0 +1,13 @@
+/*
+Screen generals
+*/
+.timerScreen{
+    padding: 2rem 0;
+    height: 100%;
+    max-width: 80%;
+    margin: 0 auto;
+    display:flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}

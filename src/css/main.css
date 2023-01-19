@@ -1,0 +1,26 @@
+/*
+Import normalize
+*/
+@import './normalize/normalize.css';
+
+/*
+Import fonts
+*/
+@import './general/fonts.css';
+
+/*
+Import all pages
+*/
+@import './pages/onboarding.css';
+@import './pages/profile.css';
+@import './pages/project.css';
+@import './pages/dashboard.css';
+@import './pages/error.css';
+@import './pages/createProject.css';
+@import './pages/timer.css';
+
+/*
+Import general styling and utils
+*/
+@import './general/style.css';
+@import './general/utils.css';

@@ -1,0 +1,35 @@
+.createProjectScreen{
+    padding: 2rem 0;
+    height: 100%;
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+.tags-container{
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    gap:2rem;
+}
+
+.tag-checkbox{
+    display:none;
+}
+.tag-checkbox:checked + label{
+    background-color: #F5F5F5;
+    color: #000;
+}
+
+.tag-label{
+    user-select: none;
+    font-weight: 800;
+    border:1px solid;
+    border-radius: 5px;
+    padding: 0.5rem;
+}
+
+.tag-label:hover{
+    cursor: pointer;
+}
+
+.tags-paragraph{}
