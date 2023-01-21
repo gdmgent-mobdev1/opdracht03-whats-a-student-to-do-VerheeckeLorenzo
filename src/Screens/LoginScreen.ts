@@ -1,26 +1,32 @@
 import Authenticator from "../Auth/Authenticator";
 import ElementFactory from "../Components/ElementFactory";
-import Router from "../lib/router";
 import { Screen } from "./Screen";
+import googleSvg from '../Assets/google.svg';
+import facebookSvg from '../Assets/facebook.svg';
 
 class LoginScreen extends Screen{
     loginScreen: HTMLElement;
     constructor(){
         super({name: 'LoginScreen',routerPath:'/', isAsync: false});
-        this.loginScreen = document.createElement("div");
+        this.loginScreen = ElementFactory.createContainer({classNames: ["loginScreen"]});
     }
     render(): HTMLElement{
-        const title = ElementFactory.createTitle({text: "Login", size:1})
+        const title = ElementFactory.createTitle({text: "Login", size:1, classNames:['login-title']})!;
         const email = ElementFactory.createInput({type: "email", id: "mail", name: "email"});
         const emailLabel = ElementFactory.createLabel({htmlFor: "mail", text: "E-mail"});
         const emailInput = ElementFactory.createContainer({children:[emailLabel, email], classNames: ['input-container']})
         const password = ElementFactory.createInput({type: "password", id: "password", name: "password"});
         const passwordLabel = ElementFactory.createLabel({htmlFor: "password", text: "Password"});
         const passwordInput = ElementFactory.createContainer({children:[passwordLabel, password], classNames: ['input-container']})
-        const loginButton = ElementFactory.createButton({text: "Login", onClick: () =>{ new Authenticator().login()}})
-        const buttonGoogle = ElementFactory.createButton({text: "Login with Google", onClick: () =>{ new Authenticator().loginWithGoogle()}})
-        const buttonFacebook = ElementFactory.createButton({text: "Login with Facebook", onClick: () =>{ new Authenticator().loginWithFacebook()}})
-        const buttonRegister = ElementFactory.createButton({text: "Register", onClick: () =>{ window.location.replace('/register');}});
+        const loginButton = ElementFactory.createButton({text: "Login", className:"login-button", onClick: () =>{ new Authenticator().login()}})
+
+        const googleIcon = ElementFactory.createImage({url: googleSvg ,alt:'Google icon',classNames:['login-icon']});
+        const buttonGoogle = ElementFactory.createButton({children: [googleIcon, ElementFactory.createSpan({text:"Login with Google"})], className:'google-button', onClick: () =>{ new Authenticator().loginWithGoogle()}})
+
+        const facebookIcon = ElementFactory.createImage({url: facebookSvg,alt:'Facebook icon',classNames:['login-icon']});
+        const buttonFacebook = ElementFactory.createButton({children: [facebookIcon,ElementFactory.createSpan({text:"Login with Facebook"})], className:'facebook-button', onClick: () =>{ new Authenticator().loginWithFacebook()}})
+
+        const registerLink = ElementFactory.createLink({classNames: ["onboarding__link"], text: "Don't have an account?", href:"./register"});
         const formValidator = ElementFactory.createFormValidation();
 
         const loginForm = ElementFactory.createForm({
@@ -32,20 +38,13 @@ class LoginScreen extends Screen{
             ],
           });
 
-        const loginContainer = ElementFactory.createContainer({
-            classNames: ['login'],
-            children: [
-                title,
-                formValidator,
-                loginForm,
-                buttonGoogle,
-                buttonFacebook,
-                buttonRegister
-            ]
-        })
-
-
-        this.loginScreen.append(loginContainer);
+        this.loginScreen.append(
+            title,
+            formValidator,
+            loginForm,
+            buttonGoogle,
+            buttonFacebook,
+            registerLink);
         return this.loginScreen;
     }
 }

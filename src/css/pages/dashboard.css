@@ -152,9 +152,18 @@ MEDIA QUERIES
 */
 
 @media screen and (max-width: 1040px){
+    
+    .header-options{
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .header-icon{
+        margin-right:1rem;
+    }
     .dashboardScreen{
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr 1fr;
+        grid-template-rows: auto;
         grid-template-areas: 
         "header"
         "projects"

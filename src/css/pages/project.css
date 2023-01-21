@@ -1,3 +1,123 @@
 .project-create-form{
     margin-top: 20px;   
 }
+
+.projectScreen{
+    min-height: 100vh;
+    display:grid;
+    filter: blur(0px);
+    grid-template-rows: 15% 1fr;
+    grid-template-columns: 1fr 20%;
+    grid-template-areas:
+    "header header"
+    "content settings";
+}
+
+.projectScreen p{
+    margin:0;
+}
+
+.projectScreen h2{
+    margin-bottom: 1.5rem;
+}
+
+.project-header{
+    z-index: 2;
+    box-shadow: 0 10px 10px 0 rgba(32, 32, 32, 0.2);
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.project-settings{
+    grid-area: settings;
+    border-left: 2px solid white;
+    padding: 2rem;
+}
+
+.project-content{
+    grid-area: content;
+    padding: 2rem;
+}
+
+.create-task-form{
+    display: flex;
+    gap: 0.5rem 1rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.create-task-form button{
+    height:2.5rem;
+}
+
+.create-task-form .input-container input{
+    height:1.5rem;
+}
+
+.user-container{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.user-container p{
+    text-align: center;
+}
+
+.search-users-dropdown{
+    position:relative;
+    color: var(--primary-color);
+}
+
+#search-users{
+    width:80%;
+}
+
+.user-options{
+    position:absolute;
+    padding: 0.5rem 1rem;
+    background-color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+    width: 80%;
+}
+
+.user-option{
+    padding:0.5rem;
+    transition: 0.1s ease-in-out;
+}
+
+.user-option:not(:first-child){
+    border-top: 1px solid lightgray;
+}
+
+.user-option:hover{
+    cursor:pointer;
+   background-color:lightgray;
+   transition: 0.1s ease-in-out;
+}
+
+.user-image{
+    height: 4rem;
+    width: 4rem;
+    border-radius: 50%;
+    margin: 1rem 0;
+}
+
+/*
+MEDIA QUERIES
+*/
+@media screen and (max-width: 1400px){
+    .projectScreen{
+        grid-template-rows: 15% 1fr;
+        grid-template-columns: 1fr;
+        grid-template-areas:
+        "header"
+        "content";
+    }
+    .project-settings{
+        display: none;
+    }
+}

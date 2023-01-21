@@ -11,3 +11,8 @@ Screen generals
     gap: 2rem;
     align-items: center;
 }
+
+.time{
+    font-size: 4rem;
+    font-weight: 700;
+}

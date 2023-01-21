@@ -4,3 +4,11 @@
     max-width: 80%;
     margin: 0 auto;
 }
+
+.profile-form{
+    margin-top:4rem;
+}
+
+.profile-form .input-container{
+    margin-bottom: 2rem;
+}

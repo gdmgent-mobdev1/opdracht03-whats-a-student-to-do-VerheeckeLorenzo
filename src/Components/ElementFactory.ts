@@ -1,8 +1,7 @@
 import Authenticator from "../Auth/Authenticator";
 import { DAYS } from "../Lib/consts";
-import Router from "../lib/router";
 import User from "../Models/User";
-import Notification from "./Notification";
+import Invite from "../Models/Invite";
 
 const ElementFactory = {
   createContainer({
@@ -27,20 +26,80 @@ const ElementFactory = {
   createHeader({
     headerText = '',
     user = new User(),
-  }:{headerText?:string, user?:User}) {
+    invites = [],
+  }:{headerText?:string, user?:User, invites?: any}) {
     const header = document.createElement('header');
     let avatarObject = null;
+
     const projectsIcon = this.createIcon({ classNames: ['fa', 'fa-project-diagram', 'header-icon'] });
     projectsIcon.onclick = () => window.location.replace('/dashboard');
+
     const userIcon = this.createIcon({ classNames: ['fa', 'fa-user', 'header-icon'] });
     userIcon.onclick = () => window.location.replace('/profile');
+
+    
+    const hasInvitesCircle = this.createContainer({
+      classNames: ['has-invites-circle', 'hidden'],
+    })
     const notificationIcon = this.createIcon({ classNames: ['fa', 'fa-bell', 'header-icon']})
-    notificationIcon.onclick = () => {Notification.show()};
+    const notificationList = this.createContainer({
+      classNames: ['notification-list', 'hidden'],
+    })
+
+    if(invites.length > 0){
+      hasInvitesCircle.classList.remove('hidden')
+    }
+
+    notificationIcon.addEventListener('click', async () =>{
+      notificationList.classList.toggle('hidden');
+      notificationList.innerHTML = '';
+      invites.forEach((invite:Invite)=>{
+        const inviteElement = this.createContainer({
+          classNames: ['invite'],
+          children:[
+            this.createParagraph({
+              classNames: ['invite-title'],
+              text: `Invite from ${invite.from}`,
+            }),
+            this.createContainer({
+              classNames: ['invite-buttons'],
+              children:[
+                this.createButton({
+                  className: 'accept-invite',
+                  text: 'Accept',
+                  onClick: async ()=>{
+                    await Invite.acceptInvite(invite.id!, invite.invitedTo!,invite.to!)
+                    window.location.replace('/dashboard')
+                  }
+                }),
+                this.createButton({
+                  className: 'decline-invite',
+                  text: 'Decline',
+                  onClick: async ()=>{
+                    await Invite.removeInvite(invite.id!)
+                    window.location.replace('/dashboard')
+                  }
+                })
+              ]
+            })
+          ]
+        })
+        notificationList.appendChild(inviteElement)
+      })      
+    });
+    
+
+    const bellContainer = this.createContainer({
+      classNames: ['bell-container'],
+      children: [notificationIcon,hasInvitesCircle, notificationList] 
+    });
+
     const logoutIcon = this.createIcon({ classNames: ['fa', 'fa-sign-out-alt', 'header-icon']})
     logoutIcon.onclick = () => {Authenticator.logout()};
-    const iconsContainer = this.createContainer({ classNames: ['icons'], children: [projectsIcon,userIcon, notificationIcon, logoutIcon] });
-    if (user.avatar) avatarObject = this.createImage({url:user.avatar,alt:"profile avatar"});
-    else avatarObject = this.createSpan({text:user.email[0]});
+
+    const iconsContainer = this.createContainer({ classNames: ['icons'], children: [projectsIcon,userIcon, bellContainer, logoutIcon] });
+    if (user.avatar) avatarObject = this.createImage({url:user.avatar,alt:"profile avatar", classNames:['header-avatar']});
+    else avatarObject = this.createSpan({text:user.username});
     const container = this.createNavbar({
       children: [this.createTitle({ size: 1, text: headerText, classNames:['header-title']})!, this.createContainer({ classNames: ['header-options'], children: [iconsContainer, avatarObject] })],
     });
@@ -93,6 +152,35 @@ const ElementFactory = {
     return form;
   },
 
+  createDropdown({ placeholder="Select an option",classNames = [], options=[],children = [] }:
+  { placeholder?:string,classNames?: string[], options?:any[], children?: any[]}) {
+    const dropdown = document.createElement('select');
+    const defaultOption = document.createElement('option');
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    defaultOption.textContent = placeholder;
+    dropdown.appendChild(defaultOption);
+    if (classNames.length) dropdown.classList.add(...classNames);
+    if (children.length) {
+      children.forEach((child) => {
+        if (child instanceof Element) {
+          dropdown.appendChild(child);
+        }
+      }
+      );
+    }
+    if (options.length) {
+      options.forEach((option) => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option;
+        optionElement.textContent = option;
+        dropdown.appendChild(optionElement);
+      }
+      );
+    }
+    return dropdown;
+  },
+
   createFormValidation() {
     return this.createContainer({
       classNames: ['form-validation', 'hide'],
@@ -106,10 +194,11 @@ const ElementFactory = {
     return span;
   },
 
-  createImage({ url = '', alt = ''}:{url:string, alt:string}) {
+  createImage({ url = '', alt = '', classNames = []}:{url:string, alt:string, classNames?:string[]}) {
     const img = document.createElement('img');
     if (url) img.src = url;
     if (alt) img.alt = alt;
+    if (classNames.length) img.classList.add(...classNames);
     img.referrerPolicy = 'no-referrer';
     return img;
   },
@@ -121,8 +210,8 @@ const ElementFactory = {
   },
 
   createButton({
-    text = '', className = 'button-white', onClick = null, children = [],
-  }:{text:string, className?:string, onClick: any, children?:any[]}) {
+    text = '', className = 'primary-button', onClick = null, children = [],
+  }:{text?:string, className?:string, onClick?: any, children?:any[]}) {
     const button = document.createElement('button');
     button.classList.add(className);
     if (children.length) {
@@ -132,7 +221,8 @@ const ElementFactory = {
         }
       });
     }
-    button.textContent += text;
+    if(text) button.textContent += text;
+    
     if (onClick) {
       button.addEventListener('click', (e) => {
         e.preventDefault();
@@ -160,8 +250,8 @@ const ElementFactory = {
   },
 
   createInput({
-    classNames = [], type = 'text', placeholder='',name = '', value = '', id = '', accept = [],required=false, disabled=false
-  }:{classNames?:string[], type:string, placeholder?:string,name:string, value?:string, id?:string, accept?:string[],required?:boolean, disabled?:boolean}) {
+    classNames = [], type = 'text', placeholder='',name = '', value = '', id = '', accept = [],required=false, disabled=false, attribute='', attributeValue = '',
+  }:{classNames?:string[], type:string, placeholder?:string,name:string, value?:string, id?:string, accept?:string[],required?:boolean, disabled?:boolean, attribute?:string, attributeValue?:string,}) {
     const input = document.createElement('input');
     if (classNames.length) input.classList.add(...classNames);
     if (accept.length) input.setAttribute('accept', accept.join());
@@ -170,6 +260,7 @@ const ElementFactory = {
     if (value) input.value = value;
     if (placeholder) input.placeholder = placeholder;
     if (id) input.id = id;
+    if (attribute) input.setAttribute(attribute, attributeValue);
     input.disabled = disabled;
     input.required = required;
     input.type = type;
@@ -177,7 +268,7 @@ const ElementFactory = {
     return input;
   },
 
-  createImageUploader({ name = '', id = '', accept = [] }:{name:string, id?:string, accept?:string[]}) {
+  createImageUploader({ name = '', id = '', circle = false, accept = [] }:{name:string, id?:string, circle ?: boolean, accept?:string[]}) {
     const cameraIcon = this.createIcon({ classNames: ['fas', 'fa-camera'] });
     const imageLabel = this.createLabel({
       htmlFor: id, classNames: ['image-uploader-label','flex-c-c'], children: [cameraIcon],
@@ -191,12 +282,16 @@ const ElementFactory = {
       children:[imageLabel, input]
     })
     
+    const className = circle ? "image-uploader-circle" : "image-uploader";
+    
     const container = this.createContainer({
-      classNames: ['image-uploader'],
+      classNames: [className],
       children: [iconContainer]
     })
     return container;
   },
+
+  createLineBreak() { return document.createElement('hr'); },
 
   // Met een heel klein beetje hulp van chatGPT (voor tr structuur)
   createCalendar({classNames=[]}:{classNames:string[]}){

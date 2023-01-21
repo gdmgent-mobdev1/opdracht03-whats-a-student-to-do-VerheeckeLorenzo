@@ -1,3 +1,4 @@
+import { Loader } from './Components/Loader';
 import { initFirebase } from './Lib/firebase';
 import Router from './lib/router';
 import { Screen } from './Screens/Screen';
@@ -17,7 +18,7 @@ export default class App{
 
     clearParent() {
       while (this.parent?.firstChild) {
-        this.parent.removeChild(this.parent.lastChild);
+        this.parent.removeChild(this.parent.lastChild!);
       }
     }
 
@@ -31,15 +32,17 @@ export default class App{
   addComponent(component:any) {
     if (!(component instanceof Screen)) return;
 
+    component.reRender = () => { this.showComponent({ name: component.name, props: component.props }); };
+
     const { name, routerPath } = component;
     this.components.push(component);
 
     Router.getRouter().on(
       routerPath,
-      (params:any) => {
+      ({data}) => {
         this.showComponent({
           name,
-          props: params,
+          props: data,
         });
       },
     ).resolve();
@@ -54,9 +57,11 @@ export default class App{
 
 
     if(foundComponent.isAsync){
+      this.feedbackContainer.append(new Loader().render());
       foundComponent
       .render()
       .then((renderedComponent:HTMLElement) => {
+        this.clearFeedback();
         this.parent.appendChild(renderedComponent);
       })
       .catch((e:Error) => {

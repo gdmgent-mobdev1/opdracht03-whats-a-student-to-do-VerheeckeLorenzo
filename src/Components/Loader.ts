@@ -1,11 +1,10 @@
-import { Component } from "./Component";
+import ElementFactory from "./ElementFactory";
 
-export class Loader extends Component{
+export class Loader{
     loader: HTMLElement;
     constructor(){
-        super();
-        this.loader = document.createElement("div");
-        this.classList?.push("loader");
+        this.loader = ElementFactory.createContainer({classNames: ["loader"], children: [ElementFactory.createContainer({classNames: ["spinner"]})]});
+        // (this.loader.classList as any).push("loader");
     }
 
     render(){

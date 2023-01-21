@@ -1,6 +1,11 @@
 :root{
     --primary-color: #272727;
     --secondary-color: #FDFDFD;
+    --light-pink: #FFB2B3;
+    --dark-pink: #FF7C82;
+    --primary-purple: #9300FF;
+    --fb-blue: #4267B2;
+    --primary-orange:#FFC700;
 }
 
 body{
@@ -27,6 +32,10 @@ header{
     grid-area:header;
 }
 
+hr{
+    margin: 2rem 0;
+}
+
 nav{
     display:flex;
     justify-content: space-between;
@@ -51,12 +60,62 @@ APP
 }
 
 /*
+FEEDBACK
+*/
+#feedback{
+    position: absolute;
+    top: 10;
+    left: 10;
+    z-index: 5;
+}
+
+.loader{
+    height:100vh;
+    width:100vw;
+    background-color: var(--primary-color);
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner{
+    width: 5rem;
+    height: 5rem;
+    border-radius:100%;
+    border: 0.5rem solid transparent;
+    border-top: 0.5rem solid var(--primary-purple);
+    animation: spin 1s ease infinite;
+    display: grid;
+    justify-self: center;
+}
+
+@keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+}
+
+.hidden{
+    display: none;
+}
+
+/*
 GENERAL INPUTS ETC
 */
+.form-validation{
+    background-color: var(--dark-pink);
+    color:var(--secondary-color);
+    padding: 0.5rem;
+    border-radius: 0.1875rem;
+    margin: 2rem 0;
+}
+
 .input-container{
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
 }
 .input-container input{
     padding: 0.5rem 1rem;
@@ -67,6 +126,7 @@ BUTTONS
 */
 
 .primary-button{
+    width: 18rem;
     background-color: #FDFDFD;
     color: #272727;
     border: 1px solid white;
@@ -82,6 +142,41 @@ BUTTONS
     background-color: #272727;
     color: #FDFDFD;
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.danger-button{
+    width:2.5rem;
+    height:2.5rem;
+    border-radius:25%;
+    background-color: transparent;
+    border: 2px solid var(--dark-pink);
+    color:var(--secondary-color);
+    padding: 0.5rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.danger-button:hover{
+    cursor: pointer;
+    background-color: var(--dark-pink);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.danger-button-large:hover{
+    cursor: pointer;
+    background-color: transparent;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.danger-button-large{
+    margin-top:1rem;
+    border: 2px solid var(--dark-pink);
+    background-color: var(--dark-pink);
+    color:var(--secondary-color);
+    width: 18rem;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius:3px;
+    transition: background-color 0.2s ease-in-out;
 }
 
 /*
@@ -110,8 +205,67 @@ header>div{
     font-size: 2rem;
 }
 
+.icons{
+    display:flex;
+}
+
 .icons i:hover{
     cursor:pointer;
+}
+
+.bell-container{
+    position:relative;
+    margin-right:3rem;
+    font-size: 2rem;
+}
+
+.bell-container>i{
+    margin-right:0;
+}
+
+.notification-list{
+    position: absolute;
+    top: 3rem;
+    right: 0;
+    background-color: var(--primary-orange);
+    color: var(--primary-color);
+    font-weight: bold;
+    border: 1px solid var(--secondary-color);
+    border-radius: 0.1875rem;
+    padding: 1rem;
+    width: 20rem;
+    z-index: 5;
+}
+
+.invite{
+    font-size: 1rem;
+}
+
+.invite p{
+    margin:0;
+}
+
+.invite-buttons{
+    margin-top:0.5rem;
+    display:flex;
+    gap:1rem;
+}
+
+.has-invites-circle{
+    position: absolute;
+    top: 0;
+    right: -5px;
+    border-radius: 50%;
+    width: 1rem;
+    height: 1rem;
+    background-color: var(--primary-purple);
+}
+
+
+.header-avatar{
+    border-radius: 50%;
+    width: 5rem;
+    height: 5rem;
 }
 
 /*
@@ -122,10 +276,32 @@ FORM & INPUTS
     margin-bottom: 1.25rem;
 }
 
+.image-uploader-circle{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
 .image-uploader>div{
-    border: 0.0625rem solid #FAFAFA;
+    border: 2px solid #FAFAFA;
     border-radius: 0.1875rem;
     height: 4.75rem;
+}
+
+.image-uploader-circle>div{
+    border: 2px solid #FAFAFA;
+    border-radius:50%;
+    width:5rem;
+}
+
+.image-uploader-circle label{
+    width:5rem;
+    height:5rem;
+}
+
+.image-uploader-circle input{
+    display:none;
 }
 
 .image-uploader label{

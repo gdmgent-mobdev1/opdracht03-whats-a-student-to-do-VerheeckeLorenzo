@@ -16,7 +16,7 @@ class User {
     hasAvatar: boolean;
     username: string;
 
-  constructor( id="", email = '', avatar = '', username = 'test') {
+  constructor( id="", email = '', avatar = '', username = '') {
     this.id = id;
     this.email = email;
     this.avatar = avatar;
@@ -32,12 +32,12 @@ class User {
   //   this.hasAvatar = !!this.avatar;
   // }
 
-
   async storeUserData() {
     const db = getFirestore();
     await setDoc(doc(db, 'users', this.id), {
       email: this.email,
       avatar: this.avatar,
+      username: this.username,
     });
   }
 
@@ -62,12 +62,21 @@ class User {
     });
   }
 
-  // update the user
-  static async updateUserData(uid:string) {
+  static async getUserById(uid: string){
     const db = getFirestore();
-    const docRef = doc(db, 'users', uid);
+    const docSnap = await getDoc(doc(db, 'users', uid));
+    const data = docSnap.data();
+    return new User(uid, data?.email, data?.avatar, data?.username);
+  }
+
+  // update the user
+  async updateUserData() {
+    const db = getFirestore();
+    const docRef = doc(db, 'users', this.id);
+    
     await updateDoc(docRef, {
-        username: this.use,
+        username: this.username,
+        avatar: this.avatar,
     });
   }
 
@@ -92,7 +101,7 @@ class User {
         if (user) {
           const docSnap = await getDoc(doc(db, 'users', user.uid));
           const userData = docSnap.data();
-          const userObject = new User(user.uid, userData?.email, userData?.avatar);
+          const userObject = new User(user.uid, userData?.email, userData?.avatar, userData?.username);
           resolve(userObject);
         } else {
           window.location.replace('/');
@@ -103,11 +112,6 @@ class User {
 
   // deletes all the data of the current user and redirects to the login page
   static async deleteCurrentUser() {
-    const portal = document.getElementById('portal');
-    while (portal!.firstChild) {
-      portal!.removeChild(portal!.lastChild!);
-    }
-    portal!.appendChild(new Loader().render());
     const db = getFirestore();
     const auth = getAuth();
     const user = auth.currentUser;

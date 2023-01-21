@@ -1,4 +1,14 @@
-.login{
+.onboarding__link{
+    color: var(--color-primary);
+    text-decoration: underline;
+    font-size: 1rem;
+    margin-top: 1rem;
+}
+
+/*
+Login
+*/
+.loginScreen{
     display:flex;
     flex-direction:column;
     justify-content: center;
@@ -6,3 +16,85 @@
     height: 100vh;
 }
 
+.loginScreen .input-container{
+    margin-bottom: 1rem;
+}
+
+.login-title{
+    margin-bottom:2rem;
+}
+
+.login-button{
+    margin-top:1.5rem;
+    width: 18rem;
+    background-color: #FDFDFD;
+    color: #272727;
+    border: 1px solid white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.1875rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.login-icon{
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+.google-button{
+    margin-top:1rem;
+    width: 18rem;
+    background-color: var(--primary-orange);
+    color: var(--secondary-color);
+    border: none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.1875rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+
+.facebook-button{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:1rem;
+    width: 18rem;
+    background-color: var(--fb-blue);
+    color: var(--secondary-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.1875rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+
+/*
+Register
+*/
+.registerScreen{
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.registerScreen .input-container{
+    margin-bottom:1rem;
+}
+
+.register-title{
+    margin-bottom:2rem;
+}

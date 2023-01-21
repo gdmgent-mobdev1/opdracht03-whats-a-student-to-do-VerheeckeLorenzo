@@ -6,7 +6,11 @@ export abstract class Screen{
     name: string;
     routerPath: string;
     appContainer: HTMLElement;
-    props: any ;
+    feedbackContainer: HTMLElement;
+    props: any;
+
+    reRender: (() => void) | undefined;
+
     constructor({
         name,
         routerPath,
@@ -16,6 +20,7 @@ export abstract class Screen{
         this.routerPath=routerPath;
         this.isAsync=isAsync;
         this.appContainer = document.getElementById('app')!;
+        this.feedbackContainer = document.getElementById('feedback')!;
     }
 
     clearAppContainer(){

@@ -11,17 +11,14 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   FacebookAuthProvider,
-  TwitterAuthProvider,
   signOut,
 } from 'firebase/auth';
 import {
   getStorage, ref, uploadBytes, getDownloadURL,
 } from 'firebase/storage';
 import {Loader} from '../Components/Loader';
-import Router from '../Lib/Router';
 import User from '../Models/User';
 
-/* eslint-disable consistent-return */
 class Authenticator {
   errorContainer: HTMLElement;
   feedbackContainer: HTMLElement;
@@ -48,17 +45,17 @@ class Authenticator {
     this.removeError();
     this.feedbackContainer.appendChild(new Loader().render());
     const formData = new FormData(document.querySelector('.register__form') as HTMLFormElement);
-    const username = formData.get('username');
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const confPassword = formData.get('confirm');
+    const username = formData.get('username') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const confPassword = formData.get('confirmPassword') as string;
     const avatar = formData.get('avatar');
     let imageUrl = '';
 
     // if there is an avatar
-    if (avatar.size !== 0) {
-      // Check if file type is image (https://roufid.com/javascript-check-file-image/)
-      if (avatar.type.split('/')[0] === 'image') {
+    if (avatar?.size !== 0) {
+      // https://stackoverflow.com/questions/29805909/jquery-how-to-check-if-uploaded-file-is-an-image-without-checking-extensions
+      if (avatar?.type.split('/')[0] === 'image') {
         const storage = getStorage();
         const storageRef = ref(storage, avatar.name);
         await uploadBytes(storageRef, avatar).then(() => {
@@ -67,7 +64,7 @@ class Authenticator {
           });
         });
       } else {
-        this.displayError('The entered avatar is not an image.');
+        this.displayError('Please upload an image file');
         document.querySelector("input[name='avatar']")!.value = '';
       }
     }
@@ -83,12 +80,12 @@ class Authenticator {
               }).then(async () => {
                 const userClass = new User(
                   result.user.uid,
-                  username,
                   email,
                   imageUrl,
+                  username,
                 );
                 await userClass.storeUserData();
-                window.location.replace('/');
+                window.location.replace('/dashboard');
               }).catch((e) => {
                 this.displayError(e.message);
               });
@@ -102,11 +99,10 @@ class Authenticator {
         this.displayError('Password and confirm password do not match, please try again :(');
       }
     } else {
-      this.displayError('Please fill in all necessary fields to register!');
+      this.displayError('Please fill in all required fields to register!');
     }
   }
 
-  // logs in the user
   async login() {
     this.removeError();
     this.feedbackContainer.appendChild(new Loader().render());
@@ -131,8 +127,6 @@ class Authenticator {
     }
   }
 
-
-  // login with google
   async loginWithGoogle() {
     this.removeError();
     this.feedbackContainer.appendChild(new Loader().render());
@@ -142,10 +136,10 @@ class Authenticator {
       .then(async (result) => {
         const { user } = result;
         const {
-          uid, email, photoURL,
+          uid, displayName, email, photoURL,
         } = user;
 
-        const userClass = new User( uid, email!, photoURL!);
+        const userClass = new User( uid, email!, photoURL!,displayName!);
         await userClass.storeUserData();
 
         // const { isNewUser } = getAdditionalUserInfo(result);
@@ -162,7 +156,6 @@ class Authenticator {
       });
   }
 
-  // login with facebook
   async loginWithFacebook() {
     this.removeError();
     this.feedbackContainer.appendChild(new Loader().render());
@@ -188,7 +181,6 @@ class Authenticator {
       });
   }
 
-  // logs out the current user
   static logout() {
     const auth = getAuth();
     signOut(auth).then(() => {

@@ -4,33 +4,26 @@ import ElementFactory from "../Components/ElementFactory";
 import Invite from "../Models/Invite";
 import User from "../Models/User";
 import { Screen } from "./Screen";
-
 export default class ProfileScreen extends Screen {
-    profileScreen : HTMLElement;
-    user : User|null = null;
-    constructor(){
-        super({name:'Profile', routerPath:'/profile', isAsync:true});
-        this.profileScreen = ElementFactory.createContainer({classNames:['profile-screen']});
+    constructor() {
+        super({ name: 'Profile', routerPath: '/profile', isAsync: true });
+        this.user = null;
+        this.profileScreen = ElementFactory.createContainer({ classNames: ['profile-screen'] });
     }
-
-    async render(){
+    async render() {
         this.user = await User.getCurrentUserData();
-
-        const allInvites = await Invite.getInvites(this.user.id)
-        const header = ElementFactory.createHeader({headerText:'Edit Profile',user:this.user, invites:allInvites })!;
-        
+        const allInvites = await Invite.getInvites(this.user.id);
+        const header = ElementFactory.createHeader({ headerText: 'Edit Profile', user: this.user, invites: allInvites });
         const formValidation = ElementFactory.createFormValidation();
-
         const imageInput = ElementFactory.createImageUploader({
             name: 'image',
             id: 'image',
             accept: ['image/png', 'image/jpeg', 'image/jpg'],
             circle: true,
         });
-
         const usernameInput = ElementFactory.createContainer({
-            classNames:['input-container'],
-            children:[
+            classNames: ['input-container'],
+            children: [
                 ElementFactory.createLabel({
                     htmlFor: 'username',
                     text: 'Username',
@@ -41,10 +34,9 @@ export default class ProfileScreen extends Screen {
                 }),
             ]
         });
-
         const emailInput = ElementFactory.createContainer({
-            classNames:['input-container'],
-            children:[
+            classNames: ['input-container'],
+            children: [
                 ElementFactory.createLabel({
                     htmlFor: 'email',
                     text: 'Email',
@@ -55,55 +47,51 @@ export default class ProfileScreen extends Screen {
                 }),
             ]
         });
-
         const saveButton = ElementFactory.createButton({
-            className:'primary-button',
-            text:'Save',
+            className: 'primary-button',
+            text: 'Save',
             onClick: async () => {
-                const formData = new FormData(document.querySelector('.profile-form') as HTMLFormElement);
-                const username = formData.get('username') as string;
+                const formData = new FormData(document.querySelector('.profile-form'));
+                const username = formData.get('username');
                 const avatar = formData.get('image');
-                if(avatar?.size !== 0){
-                    if(avatar?.type.split('/')[0]==='image'){
+                if (avatar?.size !== 0) {
+                    if (avatar?.type.split('/')[0] === 'image') {
                         const storage = getStorage();
                         const storageRef = ref(storage, avatar.name);
                         await uploadBytes(storageRef, avatar)
-                        .then(()=>{
-                            getDownloadURL(storageRef).then((url)=>{
-                                this.user!.avatar = url;
+                            .then(() => {
+                            getDownloadURL(storageRef).then((url) => {
+                                this.user.avatar = url;
                                 this.user?.updateUserData();
                             });
                         });
-                    }else{
+                    }
+                    else {
                         new Authenticator().displayError('Please upload an image');
                     }
                 }
-                if(username){ this.user!.username = username; }
-
+                if (username) {
+                    this.user.username = username;
+                }
             }
         });
-
         const profileForm = ElementFactory.createForm({
-            classNames:['profile-form'],
-            children:[
+            classNames: ['profile-form'],
+            children: [
                 imageInput,
                 usernameInput,
                 emailInput,
                 saveButton
             ]
-        })
-
+        });
         const deleteAccount = ElementFactory.createButton({
-            text:'Delete Account',
-            className:'danger-button-large',
+            text: 'Delete Account',
+            className: 'danger-button-large',
             onClick: async () => {
                 await User.deleteCurrentUser();
             }
         });
-
         this.profileScreen.append(header, formValidation, profileForm, deleteAccount);
-
-
         return this.profileScreen;
     }
 }

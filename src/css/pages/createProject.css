@@ -5,6 +5,10 @@
     margin: 0 auto;
 }
 
+.project-create-form .input-container{
+    margin-bottom: 1rem;
+}
+
 .tags-container{
     display: flex;
     flex-wrap: wrap;
@@ -16,7 +20,6 @@
     display:none;
 }
 .tag-checkbox:checked + label{
-    background-color: #F5F5F5;
     color: #000;
 }
 

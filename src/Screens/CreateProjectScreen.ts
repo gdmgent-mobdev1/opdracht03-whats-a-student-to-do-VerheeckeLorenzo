@@ -5,6 +5,7 @@ import { Screen } from "./Screen";
 import User from "../Models/User";
 import FormValidator from "../Auth/FormValidator";
 import { Tag } from "../Models/Tag";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 export default class CreateProjectScreen extends Screen{
     project : Project|null = null;
@@ -42,13 +43,21 @@ export default class CreateProjectScreen extends Screen{
           });
 
           // create an input to upload an image for the project
-          const imageInput = ElementFactory.createImageUploader({
-            name: 'image',
-            id: 'image',
-            accept: ['image/png', 'image/jpeg', 'image/jpg'],
+          const imageInput = ElementFactory.createContainer({
+            classNames: ['input-container'],
+            children: [
+              ElementFactory.createLabel({
+                htmlFor: 'image',
+                text: 'Project banner',
+                classNames: ['input-label'],
+              }),
+              ElementFactory.createImageUploader({
+                name: 'image',
+                id: 'image',
+                accept: ['image/png', 'image/jpeg', 'image/jpg'],
+              }),
+            ]
           })
-
-
 
         const descriptionInput = ElementFactory.createContainer({
             classNames: ['input-container'],
@@ -76,49 +85,22 @@ export default class CreateProjectScreen extends Screen{
             const tagLabel = ElementFactory.createLabel({htmlFor:tag.name,text:tag.name, classNames:['tag-label']});
             tagLabel.style.borderColor= tag.color;
             const tagCheckbox = ElementFactory.createInput({id:tag.name,type:'checkbox', name:"tags", value:tag.name, classNames:['tag-checkbox']})
+            tagCheckbox.addEventListener('change',(e)=>{
+              if(tagCheckbox.checked){
+                tagLabel.style.backgroundColor = tag.color;
+              }else{
+                tagLabel.style.backgroundColor = 'transparent';
+              }
+            })
             const singleTagContainer = ElementFactory.createContainer({classNames:['single-tag-container'], children:[ tagCheckbox,tagLabel]});
             tagsContainer.appendChild(singleTagContainer);
           });
+          tagsInput.append(tagsContainer)
           
           
-
-          // for the users input, we need to create a list of all users in the database
-          // and then create a dropdown menu with all the users
-          const usersLabel = ElementFactory.createLabel({htmlFor:'users', text:'Invite users', classNames:['input-label']})
-          const usersField = ElementFactory.createInput({
-            type: 'text', name: 'users', placeholder: 'Users', classNames: ['primary-input'],
-          })
-          const allUsers = await User.getAllUsers();
-          const usersDropdown = ElementFactory.createContainer({classNames:['users-dropdown']});
-          usersField.autocomplete = 'off';
-          usersField.onkeyup = (e: KeyboardEvent) => {
-            let userSearchValue = usersField.value;
-            console.log(userSearchValue);
-            if(userSearchValue===''){
-              usersDropdown.innerHTML = '';
-              return;
-            }else{
-              usersDropdown.innerHTML = '';
-              const filteredUsers = allUsers.filter(user => user.username.includes(userSearchValue));
-              filteredUsers.forEach(user => {
-                const userOption = ElementFactory.createContainer({classNames:['user-option'], children:[ElementFactory.createTitle({text:user.username, size:3})]});
-                usersDropdown.append(userOption);
-              });
-            }
-            
-          }
-
-        const usersInput = ElementFactory.createContainer({
-            classNames: ['input-container'],
-            children: [
-              usersLabel,
-              usersField,
-            ],
-          });
-
           const createProjectForm = ElementFactory.createForm({
             classNames: ['project-create-form'],
-            children: [titleInput, descriptionInput, usersInput, tagsContainer],
+            children: [imageInput,tagsInput,titleInput, descriptionInput],
           })
 
 
@@ -129,21 +111,34 @@ export default class CreateProjectScreen extends Screen{
             onClick: async () => {
               const validator = new FormValidator();
               const allInputs = validator.createProjectValidator();
-              const project = new Project(
-                allInputs?.title as string,
-                allInputs?.description as string,
-                allInputs?.image as string,
-                [],
-                allInputs?.tags as string[],
-                
-                );
-                project.joinedUsers = [this.currentUser!.id]
-                console.log(project);
-                await project.storeProject()
-                .then(()=>{window.location.replace(`/project/${project.id}`)});
-            }});  
+              const avatar = allInputs?.image;
+              if(avatar?.size !== 0){
+                if(avatar?.type.split('/')[0]==='image'){
+                    const storage = getStorage();
+                    const storageRef = ref(storage, avatar.name);
+                    await uploadBytes(storageRef, avatar)
+                    .then(()=>{
+                        getDownloadURL(storageRef).then((url)=>{
+                            const project = new Project(
+                              allInputs?.title as string,
+                              allInputs?.description as string,
+                              url,
+                              [],
+                              allInputs?.tags as string[],
+                              );
+                              project.joinedUsers = [this.currentUser!.id]
+                              project.storeProject()
+                              .then(()=>{window.location.replace(`/project/${project.id}`)})
+                        });
+                    });
+                }else{
+                    formValidation.innerHTML = 'Please upload an image';
+                }
+              }
+            },
+          });
 
-        this.createProjectScreen.append(header, formValidation, createProjectForm, usersDropdown, createProjectButton);
+        this.createProjectScreen.append(header, formValidation, createProjectForm, createProjectButton);
         return this.createProjectScreen
     }
 }
