@@ -1,7 +1,9 @@
 import Authenticator from "../Auth/Authenticator";
 import ElementFactory from "../Components/ElementFactory";
 import { Screen } from "./Screen";
+// @ts-ignore
 import googleSvg from '../Assets/google.svg';
+// @ts-ignore
 import facebookSvg from '../Assets/facebook.svg';
 
 class LoginScreen extends Screen{

@@ -45,6 +45,7 @@ export default class App {
             this.feedbackContainer.append(new Loader().render());
             foundComponent
                 .render()
+                // @ts-ignore
                 .then((renderedComponent) => {
                 this.clearFeedback();
                 this.parent.appendChild(renderedComponent);
@@ -54,6 +55,7 @@ export default class App {
             });
         }
         else {
+            // @ts-ignore
             this.parent.appendChild(foundComponent.render());
         }
     }

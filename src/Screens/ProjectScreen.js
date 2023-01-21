@@ -83,7 +83,11 @@ export default class ProjectScreen extends Screen {
             onClick: async () => {
                 const validator = new FormValidator();
                 const allInputs = validator.createTaskValidator();
-                const task = new Task(allInputs?.title, allInputs?.description, allInputs?.deadline, allInputs?.timeNeeded, allInputs?.assignee);
+                const task = new Task(allInputs?.title, allInputs?.description, 
+                // @ts-ignore
+                allInputs?.deadline, 
+                // @ts-ignore
+                allInputs?.timeNeeded, allInputs?.assignee);
                 task.storeTask()
                     .then((taskId) => { this.project.addTask(taskId); })
                     .then(() => { this.reRender(); })

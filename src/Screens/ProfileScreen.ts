@@ -63,10 +63,14 @@ export default class ProfileScreen extends Screen {
                 const formData = new FormData(document.querySelector('.profile-form') as HTMLFormElement);
                 const username = formData.get('username') as string;
                 const avatar = formData.get('image');
+                // @ts-ignore
                 if(avatar?.size !== 0){
+                    // @ts-ignore
                     if(avatar?.type.split('/')[0]==='image'){
                         const storage = getStorage();
+                        // @ts-ignore
                         const storageRef = ref(storage, avatar.name);
+                        // @ts-ignore
                         await uploadBytes(storageRef, avatar)
                         .then(()=>{
                             getDownloadURL(storageRef).then((url)=>{

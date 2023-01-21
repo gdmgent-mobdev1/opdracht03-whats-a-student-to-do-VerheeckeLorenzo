@@ -2,19 +2,19 @@
     "compilerOptions": {
       "target": "ESNext",
       "useUnknownInCatchVariables": false,
-      "useDefineForClassFields": false,
+      "useDefineForClassFields": true,
       "module": "ESNext",
       "lib": ["ESNext", "DOM","dom.iterable"],
       "moduleResolution": "Node",
-      "strict": false,
-      "resolveJsonModule": false,
-      "isolatedModules": false,
-      "esModuleInterop": false,
-      "noEmit": false,
+      "strict": true,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "esModuleInterop": true,
+      "noEmit": true,
     //   "noUnusedLocals": true,
     //   "noUnusedParameters": true,
-      "noImplicitReturns": false,
-      "skipLibCheck": false
+      "noImplicitReturns": true,
+      "skipLibCheck": true
     },
     "include": ["src"]
   }

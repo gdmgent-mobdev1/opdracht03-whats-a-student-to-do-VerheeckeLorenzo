@@ -95,10 +95,14 @@ export default class CreateProjectScreen extends Screen {
                 const validator = new FormValidator();
                 const allInputs = validator.createProjectValidator();
                 const avatar = allInputs?.image;
+                // @ts-ignore
                 if (avatar?.size !== 0) {
+                    // @ts-ignore
                     if (avatar?.type.split('/')[0] === 'image') {
                         const storage = getStorage();
+                        // @ts-ignore
                         const storageRef = ref(storage, avatar.name);
+                        // @ts-ignore
                         await uploadBytes(storageRef, avatar)
                             .then(() => {
                             getDownloadURL(storageRef).then((url) => {

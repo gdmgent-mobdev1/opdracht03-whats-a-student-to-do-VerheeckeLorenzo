@@ -52,12 +52,15 @@ class Authenticator {
     const avatar = formData.get('avatar');
     let imageUrl = '';
 
-    // if there is an avatar
+    // @ts-ignore
     if (avatar?.size !== 0) {
       // https://stackoverflow.com/questions/29805909/jquery-how-to-check-if-uploaded-file-is-an-image-without-checking-extensions
+      // @ts-ignore
       if (avatar?.type.split('/')[0] === 'image') {
         const storage = getStorage();
+          // @ts-ignore
         const storageRef = ref(storage, avatar.name);
+          // @ts-ignore
         await uploadBytes(storageRef, avatar).then(() => {
           getDownloadURL(storageRef).then((downloadUrl) => {
             imageUrl = downloadUrl;
@@ -65,6 +68,7 @@ class Authenticator {
         });
       } else {
         this.displayError('Please upload an image file');
+        // @ts-ignore
         document.querySelector("input[name='avatar']")!.value = '';
       }
     }
@@ -167,6 +171,7 @@ class Authenticator {
         const {
           email, photoURL, uid,
         } = user;
+        // @ts-ignore
         const userClass = new User(uid, email, photoURL);
 
         // if the users data is complete it goes to the dashboard else it goes to extra info page

@@ -106,7 +106,9 @@ export default class ProjectScreen extends Screen{
                 const task = new Task(
                     allInputs?.title as string,
                     allInputs?.description as string,
+                    // @ts-ignore
                     allInputs?.deadline as Date,
+                    // @ts-ignore
                     allInputs?.timeNeeded as number,
                     allInputs?.assignee as string
                     );

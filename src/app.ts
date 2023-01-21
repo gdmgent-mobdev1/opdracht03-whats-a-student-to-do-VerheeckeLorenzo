@@ -37,8 +37,10 @@ export default class App{
     const { name, routerPath } = component;
     this.components.push(component);
 
-    Router.getRouter().on(
+    // @ts-ignore
+    Router.getRouter()!.on(
       routerPath,
+      // @ts-ignore
       ({data}) => {
         this.showComponent({
           name,
@@ -60,6 +62,7 @@ export default class App{
       this.feedbackContainer.append(new Loader().render());
       foundComponent
       .render()
+      // @ts-ignore
       .then((renderedComponent:HTMLElement) => {
         this.clearFeedback();
         this.parent.appendChild(renderedComponent);
@@ -68,6 +71,7 @@ export default class App{
         console.error(e.message);
       });
     }else{
+      // @ts-ignore
       this.parent.appendChild(foundComponent.render());
     }
   }
